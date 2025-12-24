@@ -65,11 +65,6 @@ export default function LoginPage() {
                 </form>
                 <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
                     <p>Don't have an account? <Link href="/register" style={{ color: 'var(--color-primary)' }}>Register here</Link></p>
-                    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '4px', textAlign: 'left', fontSize: '12px' }}>
-                        <strong>Demo Login:</strong><br />
-                        Email: demo@srilakshmi.com<br />
-                        Pass: password123
-                    </div>
                 </div>
             </div>
         </>

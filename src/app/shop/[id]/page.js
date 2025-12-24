@@ -18,18 +18,11 @@ export default function ProductPage({ params }) {
             try {
                 const res = await fetch('/api/products');
                 const apiProducts = await res.json();
-                let found = apiProducts.find(p => p.id === params.id);
-
-                // Fallback to static data if not found in API (helpful for first-time setup)
-                if (!found) {
-                    found = products.find(p => p.id === params.id);
-                }
-
+                const found = apiProducts.find(p => p.id === params.id);
                 setProduct(found);
             } catch (error) {
                 console.error("Product fetch error:", error);
-                // Last ditch effort
-                setProduct(products.find(p => p.id === params.id));
+                setProduct(null);
             } finally {
                 setLoading(false);
             }

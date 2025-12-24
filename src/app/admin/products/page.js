@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { theme } from '../../../store/uiStore';
-import { products as mockProducts } from '../../../lib/data';
 
 export default function AdminProducts() {
     const [products, setProducts] = useState([]);
