@@ -84,8 +84,6 @@ function createMockPrisma() {
     };
 }
 
-// In the future, when DATABASE_URL is present and prisma is generated:
-/*
 if (process.env.DATABASE_URL) {
     const { PrismaClient } = require('@prisma/client');
     prisma = global.prisma || new PrismaClient();
@@ -93,8 +91,5 @@ if (process.env.DATABASE_URL) {
 } else {
     prisma = createMockPrisma();
 }
-*/
-
-prisma = createMockPrisma();
 
 export default prisma;
