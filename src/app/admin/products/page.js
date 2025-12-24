@@ -14,8 +14,9 @@ export default function AdminProducts() {
         category: 'Silk',
         fabric: '',
         color: '',
-        stockQuantity: 0,
+        stockQuantity: 25,
         description: '',
+        imageUrl: '',
         isFeatured: false
     });
 
@@ -46,7 +47,7 @@ export default function AdminProducts() {
             if (res.ok) {
                 fetchProducts();
                 setIsAdding(false);
-                setNewProduct({ name: '', price: '', category: 'Silk', fabric: '', color: '', stockQuantity: 0, description: '', isFeatured: false });
+                setNewProduct({ name: '', price: '', category: 'Silk', fabric: '', color: '', stockQuantity: 25, description: '', imageUrl: '', isFeatured: false });
             }
         } catch (error) {
             console.error("Add error:", error);
@@ -84,6 +85,7 @@ export default function AdminProducts() {
                                 value={newProduct.name}
                                 onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
                                 style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                placeholder="e.g. Royal Banarasi Silk"
                             />
                         </div>
                         <div style={{ display: 'grid', gap: '8px' }}>
@@ -96,7 +98,6 @@ export default function AdminProducts() {
                                 <option>Silk</option>
                                 <option>Cotton</option>
                                 <option>Handloom</option>
-                                <option>New Arrival</option>
                             </select>
                         </div>
                         <div style={{ display: 'grid', gap: '8px' }}>
@@ -107,14 +108,26 @@ export default function AdminProducts() {
                                 value={newProduct.price}
                                 onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
                                 style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                placeholder="0.00"
                             />
                         </div>
                         <div style={{ display: 'grid', gap: '8px' }}>
-                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Fabric Type</label>
+                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Stock Quantity</label>
                             <input
-                                value={newProduct.fabric}
-                                onChange={e => setNewProduct({ ...newProduct, fabric: e.target.value })}
+                                type="number"
+                                value={newProduct.stockQuantity}
+                                onChange={e => setNewProduct({ ...newProduct, stockQuantity: e.target.value })}
                                 style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                            />
+                        </div>
+                        <div style={{ display: 'grid', gap: '8px', gridColumn: 'span 2' }}>
+                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Image URL</label>
+                            <input
+                                required
+                                value={newProduct.imageUrl}
+                                onChange={e => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                                style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                placeholder="Paste high-res image link here"
                             />
                         </div>
                         <div style={{ display: 'grid', gap: '8px', gridColumn: 'span 2' }}>
@@ -124,15 +137,22 @@ export default function AdminProducts() {
                                 onChange={e => setNewProduct({ ...newProduct, description: e.target.value })}
                                 rows={3}
                                 style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                placeholder="Describe the saree's weave, colors, and occasion..."
                             />
                         </div>
-                        <div style={{ gridColumn: 'span 2', display: 'flex', gap: '15px', marginTop: '10px' }}>
-                            <button type="submit" style={{ flex: 1, padding: '15px', backgroundColor: theme.colors.primary, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold' }}>
-                                Save Product
+                        <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <input
+                                type="checkbox"
+                                id="isFeatured"
+                                checked={newProduct.isFeatured}
+                                onChange={e => setNewProduct({ ...newProduct, isFeatured: e.target.checked })}
+                            />
+                            <label htmlFor="isFeatured" style={{ fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>Show on Homepage (Featured)</label>
+                        </div>
+                        <div style={{ gridColumn: 'span 2', marginTop: '10px' }}>
+                            <button type="submit" style={{ width: '100%', padding: '15px', backgroundColor: theme.colors.primary, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                Save Product to Live Site
                             </button>
-                            <div style={{ flex: 1, border: '2px dashed #ddd', borderRadius: '8px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '14px', color: '#888' }}>
-                                📸 Upload Image (Drag & Drop)
-                            </div>
                         </div>
                     </form>
                 </div>

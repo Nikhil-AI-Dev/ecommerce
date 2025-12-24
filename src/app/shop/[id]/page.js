@@ -17,11 +17,19 @@ export default function ProductPage({ params }) {
         const fetchProduct = async () => {
             try {
                 const res = await fetch('/api/products');
-                const products = await res.json();
-                const found = products.find(p => p.id === params.id);
+                const apiProducts = await res.json();
+                let found = apiProducts.find(p => p.id === params.id);
+
+                // Fallback to static data if not found in API (helpful for first-time setup)
+                if (!found) {
+                    found = products.find(p => p.id === params.id);
+                }
+
                 setProduct(found);
             } catch (error) {
                 console.error("Product fetch error:", error);
+                // Last ditch effort
+                setProduct(products.find(p => p.id === params.id));
             } finally {
                 setLoading(false);
             }
@@ -47,6 +55,8 @@ export default function ProductPage({ params }) {
         alert(`Added ${quantity} ${product.name}(s) to cart`);
     };
 
+    const productImage = product.imageUrl || product.image || 'https://images.unsplash.com/photo-1610189012906-fac6d58f1a54?auto=format&fit=crop&q=80&w=600';
+
     return (
         <main style={{ backgroundColor: '#fdfbf7', minHeight: '100vh', paddingBottom: '80px' }}>
             <Navbar />
@@ -59,21 +69,22 @@ export default function ProductPage({ params }) {
                         backgroundColor: '#fff',
                         height: '600px',
                         borderRadius: '12px',
+                        overflow: 'hidden',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#aaa',
                         border: '1px solid #eee',
                         boxShadow: '0 8px 30px rgba(0,0,0,0.05)',
                         position: 'sticky',
                         top: '120px'
                     }}>
-                        {/* Placeholder for High Res Image */}
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: '60px', marginBottom: '20px' }}>📷</div>
-                            <p>High Resolution Image</p>
-                            <p style={{ fontSize: '12px', marginTop: '10px' }}>{product.name}</p>
-                        </div>
+                        <Image
+                            src={productImage}
+                            alt={product.name}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            priority
+                        />
                     </div>
 
                     {/* Details Section */}
