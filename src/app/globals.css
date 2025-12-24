@@ -1,27 +1,54 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Color Palette - Matching uiStore.js */
+  --color-primary: #5E0B15;
+  /* Deep rich maroon */
+  --color-secondary: #D4AF37;
+  /* Gold */
+  --color-accent: #800000;
+  /* Maroon variant */
+  --color-background: #FDFBF7;
+  /* Soft cream */
+  --color-background-light: #FFFBF0;
+  /* Light cream */
+  --color-background-dark: #2C1810;
+  /* Dark brown-black */
+  --color-text-main: #2C1810;
+  /* Dark brown-black for text */
+  --color-text-light: #6D6D6D;
+  --color-white: #FFFFFF;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* Font Families - Matching uiStore.js */
+  --font-family-heading: 'Playfair Display', serif;
+  --font-family-body: 'Lato', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+  --font-lato: 'Lato', sans-serif;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  /* Spacing - Matching uiStore.js */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 48px;
+  --spacing-2xl: 64px;
+  --spacing-3xl: 80px;
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Border Radius - Matching uiStore.js */
+  --border-radius-sm: 4px;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 50px;
+
+  /* Shadows - Matching uiStore.js */
+  --box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --box-shadow-lg: 0 10px 25px -5px rgba(128, 0, 0, 0.3);
+  --box-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+  /* Transitions - Matching uiStore.js */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
 }
 
 * {
@@ -30,13 +57,67 @@ body {
   margin: 0;
 }
 
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: var(--font-family-body);
+  background-color: var(--color-background);
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png"), radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+  color: var(--color-text-main);
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-heading);
+  color: var(--color-primary);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-primary:hover {
+  background-color: #4a0910;
+  transform: translateY(-2px);
+}
+
+/* Utilities */
+.text-center {
+  text-align: center;
+}
+
+.mt-lg {
+  margin-top: var(--spacing-lg);
+}
+
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
 }
