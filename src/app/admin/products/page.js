@@ -101,12 +101,22 @@ export default function AdminProducts() {
                             </select>
                         </div>
                         <div style={{ display: 'grid', gap: '8px' }}>
-                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Price (₹)</label>
+                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Original Price (₹)</label>
                             <input
                                 required
                                 type="number"
                                 value={newProduct.price}
                                 onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
+                                style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                placeholder="0.00"
+                            />
+                        </div>
+                        <div style={{ display: 'grid', gap: '8px' }}>
+                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Sale Price (Optional ₹)</label>
+                            <input
+                                type="number"
+                                value={newProduct.discountedPrice}
+                                onChange={e => setNewProduct({ ...newProduct, discountedPrice: e.target.value })}
                                 style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
                                 placeholder="0.00"
                             />

@@ -24,6 +24,7 @@ model Product {
   name          String
   description   String
   price         Decimal
+  discountedPrice Decimal?
   category      String
   imageUrl      String?
   stockQuantity Int       @default(0)

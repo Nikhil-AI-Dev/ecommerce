@@ -62,15 +62,43 @@ export default function ProductCard({ product }) {
                     }}>
                         {product.name}
                     </h3>
-                    <p style={{
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        color: 'var(--color-primary)'
-                    }}>
-                        ₹{product.price.toLocaleString('en-IN')}
-                    </p>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
+                        <p style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: 'var(--color-primary)'
+                        }}>
+                            ₹{(product.discountedPrice || product.price).toLocaleString('en-IN')}
+                        </p>
+                        {product.discountedPrice && (
+                            <p style={{
+                                fontSize: '14px',
+                                color: '#999',
+                                textDecoration: 'line-through'
+                            }}>
+                                ₹{product.price.toLocaleString('en-IN')}
+                            </p>
+                        )}
+                    </div>
                 </div>
             </Link>
+
+            {product.discountedPrice && (
+                <div style={{
+                    position: 'absolute',
+                    top: '12px',
+                    left: '12px',
+                    backgroundColor: '#e53e3e',
+                    color: '#fff',
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    zIndex: 2
+                }}>
+                    SALE
+                </div>
+            )}
 
             <button
                 onClick={(e) => {

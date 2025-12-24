@@ -96,10 +96,19 @@ export default function ProductPage({ params }) {
                         </nav>
 
                         <h1 style={{ marginBottom: '16px', fontSize: '42px', fontFamily: 'var(--font-family-heading)' }}>{product.name}</h1>
-                        <p style={{ fontSize: '32px', color: 'var(--color-primary)', fontWeight: 'bold', marginBottom: '24px' }}>
-                            ₹{product.price.toLocaleString('en-IN')}
-                            <span style={{ fontSize: '14px', fontWeight: 'normal', color: '#666', marginLeft: '10px' }}>(Inclusive of all taxes)</span>
-                        </p>
+                        <div style={{ marginBottom: '24px' }}>
+                            <p style={{ fontSize: '32px', color: 'var(--color-primary)', fontWeight: 'bold', margin: 0 }}>
+                                ₹{(product.discountedPrice || product.price).toLocaleString('en-IN')}
+                            </p>
+                            {product.discountedPrice && (
+                                <p style={{ fontSize: '18px', color: '#999', textDecoration: 'line-through', marginTop: '4px' }}>
+                                    ₹{product.price.toLocaleString('en-IN')}
+                                </p>
+                            )}
+                            <p style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>
+                                (Inclusive of all taxes)
+                            </p>
+                        </div>
 
                         <div style={{ borderTop: '1px solid #ddd', borderBottom: '1px solid #ddd', padding: '30px 0', margin: '30px 0' }}>
                             <p style={{ lineHeight: '1.8', fontSize: '18px', color: '#444' }}>
