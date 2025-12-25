@@ -144,6 +144,7 @@ export default function Navbar() {
                                     </div>
                                     <Link href="/orders" style={{ display: 'block', padding: '10px 20px', color: '#333', textDecoration: 'none', fontSize: '14px' }} className="dropdown-link">My Orders</Link>
                                     <Link href="/wishlist" style={{ display: 'block', padding: '10px 20px', color: '#333', textDecoration: 'none', fontSize: '14px' }} className="dropdown-link">Wishlist</Link>
+                                    <Link href="/admin/dashboard" style={{ display: 'block', padding: '10px 20px', color: 'var(--color-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }} className="dropdown-link">Admin Panel</Link>
                                     <button
                                         onClick={() => signOut()}
                                         style={{ display: 'block', width: '100%', padding: '10px 20px', color: '#F44336', border: 'none', background: 'none', textAlign: 'left', cursor: 'pointer', fontSize: '14px', borderTop: '1px solid #eee', marginTop: '5px' }}

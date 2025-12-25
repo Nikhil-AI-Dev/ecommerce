@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
     try {
-        // In a real app, these would be complex queries
+        // Real data queries
         const totalSales = await prisma.order.aggregate({
             _sum: { totalAmount: true }
         });
@@ -14,38 +14,60 @@ export async function GET() {
 
         const totalCustomers = await prisma.user.count();
 
-        // Get popular categories
-        const products = await prisma.product.findMany({
+        // Real Top Products by Sales
+        const topSarees = await prisma.product.findMany({
+            take: 5,
             include: {
                 _count: {
                     select: { orderItems: true }
                 }
+            },
+            orderBy: {
+                orderItems: { _count: 'desc' }
             }
         });
 
-        // Dummy historical data for charts
-        const salesTrend = [
-            { date: 'Mon', revenue: 45000 },
-            { date: 'Tue', revenue: 52000 },
-            { date: 'Wed', revenue: 48000 },
-            { date: 'Thu', revenue: 61000 },
-            { date: 'Fri', revenue: 55000 },
-            { date: 'Sat', revenue: 72000 },
-            { date: 'Sun', revenue: 68000 },
-        ];
+        // Recent Activity (Mixed feed)
+        const recentOrders = await prisma.order.findMany({
+            take: 3,
+            orderBy: { createdAt: 'desc' },
+            include: { user: { select: { name: true } } }
+        });
+
+        const recentUsers = await prisma.user.findMany({
+            take: 2,
+            orderBy: { createdAt: 'desc' }
+        });
+
+        const recentActivity = [
+            ...recentOrders.map(o => ({ action: 'New Order', user: o.user?.name || 'Guest', time: 'Recently', icon: '🛒', color: '#4CAF50' })),
+            ...recentUsers.map(u => ({ action: 'New User Joined', user: u.name, time: 'Recently', icon: '👤', color: '#2196F3' }))
+        ].slice(0, 5);
+
+        // Real Category Analysis
+        const categoryData = await prisma.product.groupBy({
+            by: ['category'],
+            _count: { id: true },
+        });
+
+        const categoryAnalysis = categoryData.map(c => ({
+            name: c.category,
+            pct: Math.round((c._count.id / (products.length || 1)) * 100)
+        }));
 
         return NextResponse.json({
             totalSales: totalSales._sum.totalAmount || 0,
             activeOrders,
             totalCustomers,
-            peakTime: "4 PM - 8 PM",
-            salesTrend,
-            categoryAnalysis: [
-                { name: 'Banarasi Silk', percentage: 40, revenue: 1250000 },
-                { name: 'Handloom Cotton', percentage: 25, revenue: 145000 },
-                { name: 'Kanchipuram', percentage: 20, revenue: 950000 },
-                { name: 'Others', percentage: 15, revenue: 520000 }
-            ]
+            avgOrderValue: totalSales._sum.totalAmount ? (Number(totalSales._sum.totalAmount) / (await prisma.order.count() || 1)) : 0,
+            recentActivity,
+            categoryAnalysis,
+            topProducts: topSarees.map(s => ({
+                name: s.name,
+                sales: s._count.orderItems,
+                revenue: `₹${(Number(s.price) * s._count.orderItems).toLocaleString()}`,
+                stock: s.stockQuantity
+            }))
         });
     } catch (error) {
         console.error("Stats API error:", error);

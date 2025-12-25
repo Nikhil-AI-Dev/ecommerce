@@ -10,41 +10,51 @@ const razorpay = process.env.RAZORPAY_KEY_ID
     })
     : null;
 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
+
 export async function POST(request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await request.json();
         const { items, totalAmount, userDetails } = body;
 
-        // 1. Create Order in Database (Pending State)
-        // Note: In a real app, we would authenticate the user here.
-        // For now, we create a 'guest' user order or link if we had auth.
+        // Create Order and OrderItems in a Transaction
+        const dbOrder = await prisma.$transaction(async (tx) => {
+            const order = await tx.order.create({
+                data: {
+                    userId: session.user.id,
+                    totalAmount: totalAmount,
+                    status: 'pending',
+                    shippingAddress: userDetails,
+                }
+            });
 
-        // Simulating database operation for prototype (since DB might not be connected yet)
-        let dbOrder;
-        // Check if prisma is the real client or our mock
-        if (prisma && prisma.order && prisma.order.create) {
-            try {
-                dbOrder = await prisma.order.create({
-                    data: {
-                        totalAmount: totalAmount,
-                        status: 'pending'
-                    }
-                });
-            } catch (e) {
-                // Fallback if DB connection fails even if client exists
-                dbOrder = { id: `ORDER_ERR_${Date.now()}`, status: 'pending', amount: totalAmount };
-            }
-        } else {
-            // Fallback for mock client or no client
-            dbOrder = { id: `ORDER_MOCK_${Date.now()}`, status: 'pending', amount: totalAmount };
-        }
+            // Create Order items
+            const orderItemsData = items.map(item => ({
+                orderId: order.id,
+                productId: item.id,
+                quantity: item.quantity,
+                price: item.price
+            }));
+
+            await tx.orderItem.createMany({
+                data: orderItemsData
+            });
+
+            return order;
+        });
 
         // 2. Create Razorpay Order
         let paymentOrderId = `mock_rpay_${Date.now()}`;
 
         if (razorpay) {
             const options = {
-                amount: totalAmount * 100, // Razorpay takes amount in paise
+                amount: Math.round(totalAmount * 100), // Razorpay takes amount in paise
                 currency: 'INR',
                 receipt: dbOrder.id,
             };

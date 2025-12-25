@@ -116,9 +116,7 @@ function ShopContent() {
                         <p style={{ marginBottom: '20px', color: '#666' }}>Showing {filteredProducts.length} results {selectedCategory !== 'All' && <span>in <strong>{selectedCategory}</strong></span>}</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '30px' }}>
                             {filteredProducts.map((product) => (
-                                <Link href={`/shop/${product.id}`} key={product.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    <ProductCard product={product} />
-                                </Link>
+                                <ProductCard key={product.id} product={product} />
                             ))}
                         </div>
 

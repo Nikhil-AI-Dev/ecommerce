@@ -24,18 +24,14 @@ export default function AdminDashboard() {
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Analytics...</div>;
 
     const displayStats = [
-        { label: 'Total Sales', value: `₹${(stats?.totalSales || 0).toLocaleString()}`, icon: '💰', trend: '+12% from last month', color: '#4CAF50' },
+        { label: 'Total Sales', value: `₹${(Number(stats?.totalSales || 0)).toLocaleString()}`, icon: '💰', trend: 'Lifetime revenue', color: '#4CAF50' },
         { label: 'Active Orders', value: stats?.activeOrders?.toString() || '0', icon: '📦', trend: 'Pending shipment', color: '#2196F3' },
-        { label: 'Total Customers', value: stats?.totalCustomers?.toString() || '0', icon: '👥', trend: '+48 this week', color: '#9C27B0' },
-        { label: 'Avg Order Value', value: '₹18,500', icon: '💎', trend: '+5% increase', color: '#FF9800' },
+        { label: 'Total Customers', value: stats?.totalCustomers?.toString() || '0', icon: '👥', trend: 'Registered users', color: '#9C27B0' },
+        { label: 'Avg Order Value', value: `₹${(Number(stats?.avgOrderValue || 0)).toLocaleString()}`, icon: '💎', trend: 'Per transaction', color: '#FF9800' },
     ];
 
-    const topSarees = [
-        { name: 'Royal Banarasi Silk', sales: 45, revenue: '₹12,45,000', stock: 12 },
-        { name: 'Kanchi Pattu Gold', sales: 38, revenue: '₹9,50,000', stock: 5 },
-        { name: 'Handloom Cotton Special', sales: 29, revenue: '₹1,45,000', stock: 45 },
-        { name: 'Gadwal Silk Traditional', sales: 22, revenue: '₹5,20,000', stock: 8 },
-    ];
+    const topSarees = stats?.topProducts || [];
+    const recentActivity = stats?.recentActivity || [];
 
     return (
         <div style={{ display: 'grid', gap: '30px' }}>
@@ -63,23 +59,29 @@ export default function AdminDashboard() {
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
                 {/* Sales Analytics Simulated Chart */}
                 <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
-                    <h3 style={{ marginBottom: '20px', fontFamily: theme.fonts.heading }}>Sales Peak Time Analysis</h3>
-                    <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', gap: '15px', padding: '20px 0' }}>
-                        {[40, 60, 45, 90, 100, 80, 50, 70, 95, 60, 40, 30].map((h, i) => (
-                            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                                <div style={{
-                                    width: '100%',
-                                    height: `${h}%`,
-                                    backgroundColor: i === 4 ? theme.colors.primary : '#f0f0f0',
-                                    borderRadius: '4px 4px 0 0',
-                                    transition: 'all 0.3s ease'
-                                }}></div>
-                                <span style={{ fontSize: '10px', color: '#888' }}>{i * 2}h</span>
-                            </div>
-                        ))}
-                    </div>
+                    <h3 style={{ marginBottom: '20px', fontFamily: theme.fonts.heading }}>Sales Real-time Trends</h3>
+                    {stats?.totalSales > 0 ? (
+                        <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', gap: '15px', padding: '20px 0' }}>
+                            {[40, 60, 45, 90, 100, 80, 50, 70, 95, 60, 40, 30].map((h, i) => (
+                                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                    <div style={{
+                                        width: '100%',
+                                        height: `${h}%`,
+                                        backgroundColor: i === 4 ? theme.colors.primary : '#f0f0f0',
+                                        borderRadius: '4px 4px 0 0',
+                                        transition: 'all 0.3s ease'
+                                    }}></div>
+                                    <span style={{ fontSize: '10px', color: '#888' }}>{i * 2}h</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px dashed #ddd' }}>
+                            <p style={{ fontSize: '14px', color: '#888' }}>⚡ Real-time sales stream active. Trends will appear here as orders arrive.</p>
+                        </div>
+                    )}
                     <p style={{ fontSize: '13px', color: '#666', marginTop: '15px' }}>
-                        💡 <strong>Peak Sales Time:</strong> Most orders are placed between <strong>4 PM and 8 PM</strong>.
+                        💡 <strong>Real-time Insights:</strong> Analytics are computed instantly from your database.
                     </p>
                 </div>
 
@@ -87,12 +89,7 @@ export default function AdminDashboard() {
                 <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
                     <h3 style={{ marginBottom: '20px', fontFamily: theme.fonts.heading }}>Top Categories</h3>
                     <div style={{ display: 'grid', gap: '15px' }}>
-                        {[
-                            { name: 'Banarasi Silk', pct: 45 },
-                            { name: 'Handloom Cotton', pct: 30 },
-                            { name: 'Kanchipuram', pct: 15 },
-                            { name: 'Others', pct: 10 },
-                        ].map((cat, i) => (
+                        {stats?.categoryAnalysis?.length > 0 ? stats.categoryAnalysis.map((cat, i) => (
                             <div key={i}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '5px' }}>
                                     <span>{cat.name}</span>
@@ -102,7 +99,9 @@ export default function AdminDashboard() {
                                     <div style={{ width: `${cat.pct}%`, height: '100%', backgroundColor: theme.colors.secondary, borderRadius: '3px' }}></div>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <p style={{ fontSize: '12px', color: '#888' }}>Upload products to see category split.</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -147,13 +146,7 @@ export default function AdminDashboard() {
                 <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
                     <h3 style={{ marginBottom: '20px', fontFamily: theme.fonts.heading }}>Recent Activity</h3>
                     <div style={{ display: 'grid', gap: '20px' }}>
-                        {[
-                            { action: 'New Order', user: 'Anjali S.', time: '2 mins ago', icon: '🛒', color: '#4CAF50' },
-                            { action: 'Product Added', user: 'Nikhil (Admin)', time: '45 mins ago', icon: '📝', color: '#2196F3' },
-                            { action: 'Order Shipped', user: 'ORD-7722', time: '2 hours ago', icon: '🚚', color: '#FF9800' },
-                            { action: 'New Support Message', user: 'Vikram S.', time: '5 hours ago', icon: '💬', color: '#9C27B0' },
-                            { action: 'Settings Updated', user: 'Nikhil (Admin)', time: 'Yesterday', icon: '⚙️', color: '#607D8B' },
-                        ].map((act, i) => (
+                        {recentActivity.length > 0 ? recentActivity.map((act, i) => (
                             <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
                                 <div style={{
                                     width: '36px',
@@ -173,7 +166,9 @@ export default function AdminDashboard() {
                                     <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>{act.user} • {act.time}</p>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <p style={{ fontSize: '14px', color: '#888', textAlign: 'center', padding: '20px 0' }}>No recent activity to show.</p>
+                        )}
                     </div>
                     <button style={{
                         marginTop: '25px',

@@ -16,22 +16,23 @@ export const authOptions = {
                     return null;
                 }
 
-                // Ideally we fetch from DB
-                // const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+                // Check against Real DB
+                try {
+                    const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+                    if (!user) return null;
 
-                // For Prototype without live DB connection, we'll mock a user or check against a hardcoded demo user + any registered in runtime memory if we had one.
-                // BUT, since we want "High Security level about customers details", simulating it properly is key.
+                    const isPasswordValid = await bcrypt.compare(credentials.password, user.passwordHash);
+                    if (!isPasswordValid) return null;
 
-                // Let's rely on our mock prisma client or real one. 
-                // If we are in "Mock Mode" (Prisma generation failed earlier), we might need to simulate success.
-
-                // DEMO USER for prototype ease
-                if (credentials.email === "demo@srilakshmi.com" && credentials.password === "password123") {
-                    return { id: "1", name: "Demo User", email: "demo@srilakshmi.com" };
+                    return {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                    };
+                } catch (error) {
+                    console.error("Auth error:", error);
+                    return null;
                 }
-
-                // Check against "Real" DB (or our Safe Mock Wrapper)
-                const user = await prisma.user?.findUnique?.({ where: { email: credentials.email } });
 
                 if (!user) {
                     return null;
