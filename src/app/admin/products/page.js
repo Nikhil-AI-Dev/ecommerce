@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { theme } from '../../../store/uiStore';
+import { CldUploadWidget } from 'next-cloudinary';
 
 export default function AdminProducts() {
     const [products, setProducts] = useState([]);
@@ -130,14 +131,39 @@ export default function AdminProducts() {
                             />
                         </div>
                         <div style={{ display: 'grid', gap: '8px', gridColumn: 'span 2' }}>
-                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Image URL</label>
-                            <input
-                                required
-                                value={newProduct.imageUrl}
-                                onChange={e => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
-                                style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
-                                placeholder="Paste high-res image link here"
-                            />
+                            <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Saree Image</label>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <input
+                                    required
+                                    value={newProduct.imageUrl}
+                                    onChange={e => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                                    style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    placeholder="Paste image link or upload below"
+                                />
+                                <CldUploadWidget
+                                    uploadPreset="slnh_upload"
+                                    onSuccess={(result) => {
+                                        setNewProduct(prev => ({ ...prev, imageUrl: result.info.secure_url }));
+                                    }}
+                                >
+                                    {({ open }) => (
+                                        <button
+                                            type="button"
+                                            onClick={() => open()}
+                                            style={{
+                                                padding: '0 20px',
+                                                backgroundColor: '#f0f0f0',
+                                                border: '1px solid #ddd',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontSize: '14px'
+                                            }}
+                                        >
+                                            📸 Upload Photo
+                                        </button>
+                                    )}
+                                </CldUploadWidget>
+                            </div>
                         </div>
                         <div style={{ display: 'grid', gap: '8px', gridColumn: 'span 2' }}>
                             <label style={{ fontSize: '13px', fontWeight: 'bold' }}>Description</label>
@@ -183,7 +209,9 @@ export default function AdminProducts() {
                             <tr key={p.id} style={{ borderBottom: '1px solid #f9f9f9' }}>
                                 <td style={{ padding: '20px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                        <div style={{ width: '40px', height: '40px', backgroundColor: '#eee', borderRadius: '4px' }}></div>
+                                        <div style={{ width: '40px', height: '40px', backgroundColor: '#eee', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+                                            {p.imageUrl && <img src={p.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                                        </div>
                                         <div>
                                             <p style={{ fontWeight: 'bold', margin: 0 }}>{p.name}</p>
                                             <p style={{ fontSize: '12px', color: '#888', margin: 0 }}>ID: {p.id}</p>
