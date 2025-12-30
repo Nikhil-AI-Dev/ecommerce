@@ -8,15 +8,15 @@ import nodemailer from 'nodemailer';
  * 2. Update the host/port for your provider (e.g., Gmail, SendGrid, Resend)
  */
 
-const transporter = nodemailer.createTransport({
-    // Example: Using a local or dummy SMTP for development
+const transporter = process.env.EMAIL_USER ? nodemailer.createTransport({
     host: process.env.EMAIL_HOST || 'smtp.example.com',
     port: process.env.EMAIL_PORT || 587,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
-});
+}) : null;
+
 
 export async function sendWelcomeEmail(toEmail, userName) {
     if (!process.env.EMAIL_USER) {
@@ -47,11 +47,58 @@ export async function sendWelcomeEmail(toEmail, userName) {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
-        console.log(`Email sent successfully to ${toEmail}`);
+        if (transporter) {
+            await transporter.sendMail(mailOptions);
+            console.log(`Email sent successfully to ${toEmail}`);
+        }
         return { success: true };
     } catch (error) {
+
         console.error("Error sending email:", error);
+        return { success: false, error };
+    }
+}
+
+export async function sendOrderConfirmationEmail(toEmail, orderId, totalAmount) {
+    if (!process.env.EMAIL_USER) {
+        console.log(`[MOCK EMAIL] To: ${toEmail} | Subject: Order Confirmed - #ORD-${orderId}`);
+        console.log(`Message: Thank you for your order of ₹${totalAmount}. We are preparing your sarees now.`);
+        return { success: true, mock: true };
+    }
+
+    const mailOptions = {
+        from: '"Sri Lakshmi Narayana Handlooms" <no-reply@slnh.com>',
+        to: toEmail,
+        subject: `Your Sri Lakshmi Narayana Handlooms Order [#ORD-${orderId}]`,
+        html: `
+            <div style="font-family: 'Playfair Display', serif; color: #5E0B15; padding: 20px; border: 1px solid #D4AF37;">
+                <h1 style="color: #5E0B15;">Order Confirmed!</h1>
+                <p>Thank you for choosing Sri Lakshmi Narayana Handlooms. We have received your order and are currently preparing it with the utmost care.</p>
+                
+                <div style="background-color: #fcfaf7; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0;"><strong>Order Number:</strong> #ORD-${orderId}</p>
+                    <p style="margin: 5px 0 0 0;"><strong>Total Amount:</strong> ₹${totalAmount.toLocaleString('en-IN')}</p>
+                </div>
+
+                <p>You can track your order status in your <a href="${process.env.NEXTAUTH_URL}/orders" style="color: #5E0B15; font-weight: bold;">Order History</a>.</p>
+                
+                <p style="margin-top: 40px; font-size: 12px; color: #666;">
+                    Sri Lakshmi Narayana Handlooms<br/>
+                    Shop No. 144, LPT Market, LB Nagar, Hyderabad<br/>
+                    Phone: +91 9440923421
+                </p>
+            </div>
+        `,
+    };
+
+    try {
+        if (transporter) {
+            await transporter.sendMail(mailOptions);
+        }
+        return { success: true };
+    } catch (error) {
+
+        console.error("Order completion email error:", error);
         return { success: false, error };
     }
 }

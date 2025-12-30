@@ -45,6 +45,7 @@ export async function GET() {
         ].slice(0, 5);
 
         // Real Category Analysis
+        const totalProducts = await prisma.product.count();
         const categoryData = await prisma.product.groupBy({
             by: ['category'],
             _count: { id: true },
@@ -52,8 +53,9 @@ export async function GET() {
 
         const categoryAnalysis = categoryData.map(c => ({
             name: c.category,
-            pct: Math.round((c._count.id / (products.length || 1)) * 100)
+            pct: totalProducts > 0 ? Math.round((c._count.id / totalProducts) * 100) : 0
         }));
+
 
         return NextResponse.json({
             totalSales: totalSales._sum.totalAmount || 0,

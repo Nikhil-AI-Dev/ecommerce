@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, SafeAr
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Colors from '../constants/Colors';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import Config from '../constants/Config';
 
 export default function CheckoutScreen({ navigation }) {
@@ -68,83 +68,89 @@ export default function CheckoutScreen({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backBtn}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Checkout</Text>
-                <View style={{ width: 24 }} />
-            </View>
-
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.sectionTitle}>Shipping Details</Text>
-                <View style={styles.form}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Full Name"
-                        value={formData.name}
-                        onChangeText={(text) => setFormData({ ...formData, name: text })}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Email Address"
-                        keyboardType="email-address"
-                        value={formData.email}
-                        onChangeText={(text) => setFormData({ ...formData, email: text })}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Phone Number"
-                        keyboardType="phone-pad"
-                        value={formData.phone}
-                        onChangeText={(text) => setFormData({ ...formData, phone: text })}
-                    />
-                    <TextInput
-                        style={[styles.input, styles.textArea]}
-                        placeholder="Complete Address"
-                        multiline
-                        numberOfLines={4}
-                        value={formData.address}
-                        onChangeText={(text) => setFormData({ ...formData, address: text })}
-                    />
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Text style={styles.backBtn}>←</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Checkout</Text>
+                    <View style={{ width: 24 }} />
                 </View>
 
-                <Text style={styles.sectionTitle}>Order Summary</Text>
-                <View style={styles.summaryContainer}>
-                    {cart.map(item => (
-                        <View key={item.id} style={styles.summaryRow}>
-                            <Text style={styles.itemText}>{item.name} x {item.quantity}</Text>
-                            <Text style={styles.itemPrice}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</Text>
-                        </View>
-                    ))}
-                    <View style={styles.divider} />
-                    <View style={styles.totalRow}>
-                        <Text style={styles.totalLabel}>Total Payable</Text>
-                        <Text style={styles.totalValue}>₹{cartTotal.toLocaleString('en-IN')}</Text>
+                <ScrollView contentContainerStyle={styles.scrollContent}>
+                    <Text style={styles.sectionTitle}>Shipping Details</Text>
+                    <View style={styles.form}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Full Name"
+                            value={formData.name}
+                            onChangeText={(text) => setFormData({ ...formData, name: text })}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email Address"
+                            keyboardType="email-address"
+                            value={formData.email}
+                            onChangeText={(text) => setFormData({ ...formData, email: text })}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Phone Number"
+                            keyboardType="phone-pad"
+                            value={formData.phone}
+                            onChangeText={(text) => setFormData({ ...formData, phone: text })}
+                        />
+                        <TextInput
+                            style={[styles.input, styles.textArea]}
+                            placeholder="Complete Address"
+                            multiline
+                            numberOfLines={4}
+                            value={formData.address}
+                            onChangeText={(text) => setFormData({ ...formData, address: text })}
+                        />
                     </View>
-                </View>
 
-                <View style={styles.paymentNote}>
-                    <Text style={styles.noteText}>🔒 Secure Payment via Razorpay (Mock Mode)</Text>
-                </View>
-            </ScrollView>
+                    <Text style={styles.sectionTitle}>Order Summary</Text>
+                    <View style={styles.summaryContainer}>
+                        {cart.map(item => (
+                            <View key={item.id} style={styles.summaryRow}>
+                                <Text style={styles.itemText}>{item.name} x {item.quantity}</Text>
+                                <Text style={styles.itemPrice}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</Text>
+                            </View>
+                        ))}
+                        <View style={styles.divider} />
+                        <View style={styles.totalRow}>
+                            <Text style={styles.totalLabel}>Total Payable</Text>
+                            <Text style={styles.totalValue}>₹{cartTotal.toLocaleString('en-IN')}</Text>
+                        </View>
+                    </View>
 
-            <View style={styles.footer}>
-                <TouchableOpacity
-                    style={[styles.placeOrderBtn, loading && { opacity: 0.7 }]}
-                    onPress={handlePlaceOrder}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator color={Colors.secondary} />
-                    ) : (
-                        <Text style={styles.placeOrderText}>Place Order • ₹{cartTotal.toLocaleString('en-IN')}</Text>
-                    )}
-                </TouchableOpacity>
-            </View>
+                    <View style={styles.paymentNote}>
+                        <Text style={styles.noteText}>🔒 Secure Payment via Razorpay (Mock Mode)</Text>
+                    </View>
+                </ScrollView>
+
+                <View style={styles.footer}>
+                    <TouchableOpacity
+                        style={[styles.placeOrderBtn, loading && { opacity: 0.7 }]}
+                        onPress={handlePlaceOrder}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color={Colors.secondary} />
+                        ) : (
+                            <Text style={styles.placeOrderText}>Place Order • ₹{cartTotal.toLocaleString('en-IN')}</Text>
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
