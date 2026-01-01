@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import Colors from '../constants/Colors';
 
 export default function ProductDetailsScreen({ route, navigation }) {
     const { product } = route.params;

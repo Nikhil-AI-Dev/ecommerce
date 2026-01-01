@@ -68,7 +68,7 @@ export default function ProductCard({ product }) {
                             fontWeight: 'bold',
                             color: 'var(--color-primary)'
                         }}>
-                            ₹{(product.discountedPrice || product.price).toLocaleString('en-IN')}
+                            ₹{Number(product.discountedPrice || product.price).toLocaleString('en-IN')}
                         </p>
                         {product.discountedPrice && (
                             <p style={{
@@ -76,7 +76,7 @@ export default function ProductCard({ product }) {
                                 color: '#999',
                                 textDecoration: 'line-through'
                             }}>
-                                ₹{product.price.toLocaleString('en-IN')}
+                                ₹{Number(product.price).toLocaleString('en-IN')}
                             </p>
                         )}
                     </div>

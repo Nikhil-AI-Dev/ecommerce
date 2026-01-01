@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import { useCart } from '../context/CartContext';
 import Colors from '../constants/Colors';
 
@@ -9,7 +9,7 @@ export default function CartScreen({ navigation }) {
     const renderItem = ({ item }) => (
         <View style={styles.cartItem}>
             <Image source={{ uri: item.image }} style={styles.itemImage} />
-            <div style={styles.itemDetails}>
+            <View style={styles.itemDetails}>
                 <Text style={styles.itemName}>{item.name}</Text>
                 <Text style={styles.itemPrice}>₹{item.price.toLocaleString('en-IN')}</Text>
 
@@ -28,7 +28,7 @@ export default function CartScreen({ navigation }) {
                         <Text style={styles.qBtnText}>+</Text>
                     </TouchableOpacity>
                 </View>
-            </div>
+            </View>
             <TouchableOpacity onPress={() => removeFromCart(item.id)} style={styles.removeBtn}>
                 <Text style={styles.removeText}>✕</Text>
             </TouchableOpacity>

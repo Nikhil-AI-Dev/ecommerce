@@ -13,11 +13,6 @@ export async function POST(req) {
             });
         }
 
-        // For demo purposes, check hardcoded demo user too
-        if (email === "demo@srilakshmi.com") {
-            user = { email: "demo@srilakshmi.com" };
-        }
-
         return NextResponse.json({ user });
     } catch (error) {
         console.log(error);

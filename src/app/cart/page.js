@@ -57,7 +57,7 @@ export default function CartPage() {
                                     <div style={{ flex: 1 }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                                             <h3 style={{ fontSize: '20px', fontFamily: 'var(--font-family-heading)', color: 'var(--color-primary)' }}>{item.name}</h3>
-                                            <p style={{ fontWeight: 'bold', fontSize: '18px' }}>₹{item.price.toLocaleString('en-IN')}</p>
+                                            <p style={{ fontWeight: 'bold', fontSize: '18px' }}>₹{Number(item.price).toLocaleString('en-IN')}</p>
                                         </div>
 
                                         <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>{item.category} • {item.fabric || 'Silk'}</p>
@@ -101,7 +101,7 @@ export default function CartPage() {
                             <div style={{ display: 'grid', gap: '15px', marginBottom: '25px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
                                     <span>Bag Subtotal</span>
-                                    <span>₹{cartTotal.toLocaleString('en-IN')}</span>
+                                    <span>₹{Number(cartTotal).toLocaleString('en-IN')}</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
                                     <span>Shipping</span>
@@ -115,7 +115,7 @@ export default function CartPage() {
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', fontWeight: 'bold', fontSize: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
                                 <span>Grand Total</span>
-                                <span style={{ color: 'var(--color-primary)' }}>₹{cartTotal.toLocaleString('en-IN')}</span>
+                                <span style={{ color: 'var(--color-primary)' }}>₹{Number(cartTotal).toLocaleString('en-IN')}</span>
                             </div>
 
                             <Link href="/checkout">

@@ -174,13 +174,13 @@ export default function CheckoutPage() {
                         {cart.map(item => (
                             <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px' }}>
                                 <span>{item.name} x {item.quantity}</span>
-                                <span>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                                <span>₹{Number(item.price * item.quantity).toLocaleString('en-IN')}</span>
                             </div>
                         ))}
                         <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }} />
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px', marginBottom: '30px' }}>
                             <span>Total Amount</span>
-                            <span>₹{cartTotal.toLocaleString('en-IN')}</span>
+                            <span>₹{Number(cartTotal).toLocaleString('en-IN')}</span>
                         </div>
 
                         <button

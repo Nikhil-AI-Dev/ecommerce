@@ -20,8 +20,9 @@ const transporter = process.env.EMAIL_USER ? nodemailer.createTransport({
 
 export async function sendWelcomeEmail(toEmail, userName) {
     if (!process.env.EMAIL_USER) {
-        console.log(`[MOCK EMAIL] To: ${toEmail} | Subject: Welcome to Sri Lakshmi Narayana Handlooms!`);
-        console.log(`Message: Hi ${userName}, thank you for registering naturally with us!`);
+        console.warn(`[MOCK EMAIL] To: ${toEmail} | Subject: Welcome to Sri Lakshmi Narayana Handlooms!`);
+        console.warn(`Message: Hi ${userName}, thank you for registering naturally with us!`);
+        console.warn("Reason: EMAIL_USER environment variable is NOT set.");
         return { success: true, mock: true };
     }
 
@@ -67,7 +68,7 @@ export async function sendOrderConfirmationEmail(toEmail, orderId, totalAmount) 
     }
 
     const mailOptions = {
-        from: '"Sri Lakshmi Narayana Handlooms" <no-reply@slnh.com>',
+        from: '"Sri Lakshmi Narayana Handlooms" <nikhilprince18@gmail.com>',
         to: toEmail,
         subject: `Your Sri Lakshmi Narayana Handlooms Order [#ORD-${orderId}]`,
         html: `

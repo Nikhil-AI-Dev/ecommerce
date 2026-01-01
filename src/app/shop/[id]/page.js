@@ -1,5 +1,5 @@
 'use client';
-import { products } from '../../../lib/data';
+import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../../../components/Navbar';
 import { useCart } from '../../../context/CartContext';
@@ -91,11 +91,11 @@ export default function ProductPage({ params }) {
                         <h1 style={{ marginBottom: '16px', fontSize: '42px', fontFamily: 'var(--font-family-heading)' }}>{product.name}</h1>
                         <div style={{ marginBottom: '24px' }}>
                             <p style={{ fontSize: '32px', color: 'var(--color-primary)', fontWeight: 'bold', margin: 0 }}>
-                                ₹{(product.discountedPrice || product.price).toLocaleString('en-IN')}
+                                ₹{Number(product.discountedPrice || product.price).toLocaleString('en-IN')}
                             </p>
                             {product.discountedPrice && (
                                 <p style={{ fontSize: '18px', color: '#999', textDecoration: 'line-through', marginTop: '4px' }}>
-                                    ₹{product.price.toLocaleString('en-IN')}
+                                    ₹{Number(product.price).toLocaleString('en-IN')}
                                 </p>
                             )}
                             <p style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>

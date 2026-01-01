@@ -12,6 +12,7 @@ const razorpay = process.env.RAZORPAY_KEY_ID
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 export async function POST(request) {
     try {
@@ -61,6 +62,10 @@ export async function POST(request) {
             const order = await razorpay.orders.create(options);
             paymentOrderId = order.id;
         }
+
+        // Send confirmation email (non-blocking)
+        sendOrderConfirmationEmail(session.user.email, dbOrder.id, totalAmount)
+            .catch(err => console.error("Email error:", err));
 
         return NextResponse.json({
             success: true,

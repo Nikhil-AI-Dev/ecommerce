@@ -5,8 +5,8 @@ import { theme } from '../../../store/uiStore';
 export default function AdminSettings() {
     const [settings, setSettings] = useState({
         storeName: 'Sri Lakshmi Narayana Handlooms',
-        email: 'contact@srilakshmi.com',
-        phone: '+91 98765 43210',
+        email: 'nikhilprince18@gmail.com',
+        phone: '+91 9440923421',
         currency: 'INR (₹)',
         timezone: 'IST (UTC+5:30)',
         maintenanceMode: false,

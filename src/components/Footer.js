@@ -39,7 +39,7 @@ export default function Footer() {
                         📞 +91 9440923421
                     </p>
                     <p style={{ fontSize: theme.fontSize.sm, color: '#ccc', marginBottom: '20px' }}>
-                        📧 info@slnh.com
+                        📧 nikhilprince18@gmail.com
                     </p>
                     <div style={{
                         marginTop: '20px',
