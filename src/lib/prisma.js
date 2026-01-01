@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
+// Prisma Client Singleton - forced update for vercel cache
+
 let prisma;
 
 if (process.env.NODE_ENV === 'production') {
