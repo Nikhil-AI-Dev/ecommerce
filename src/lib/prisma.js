@@ -1,22 +1,18 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 
 let prisma;
 
-if (process.env.DATABASE_URL) {
-    if (process.env.NODE_ENV === 'production') {
-        prisma = new PrismaClient({
+if (process.env.NODE_ENV === 'production') {
+    prisma = new PrismaClient({
+        datasourceUrl: process.env.DATABASE_URL,
+    });
+} else {
+    if (!global.prisma) {
+        global.prisma = new PrismaClient({
             datasourceUrl: process.env.DATABASE_URL,
         });
-    } else {
-        if (!global.prisma) {
-            global.prisma = new PrismaClient({
-                datasourceUrl: process.env.DATABASE_URL,
-            });
-        }
-        prisma = global.prisma;
     }
-} else {
-    throw new Error("DATABASE_URL is missing. Production database connection required for the platform to function.");
+    prisma = global.prisma;
 }
 
 export default prisma;
