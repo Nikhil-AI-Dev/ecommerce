@@ -20,7 +20,14 @@ export async function GET(request) {
             orderBy: { createdAt: 'desc' }
         });
 
-        return NextResponse.json(products);
+        const response = NextResponse.json(products);
+
+        // Add Edge Caching headers: 
+        // s-maxage=60: Cache on CDN for 60 seconds
+        // stale-while-revalidate=3600: Serve stale content while updating in background for up to 1 hour
+        response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=3600');
+
+        return response;
     } catch (error) {
         console.error("Fetch products error:", error);
         return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
