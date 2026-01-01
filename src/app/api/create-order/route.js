@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
-import prisma from '@/lib/prisma';
+import prisma from '@/lib/db';
 
 // Initialize Razorpay (will work only if keys are present, otherwise mock)
 const razorpay = process.env.RAZORPAY_KEY_ID
