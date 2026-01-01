@@ -14,6 +14,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request) {
     try {
         const session = await getServerSession(authOptions);

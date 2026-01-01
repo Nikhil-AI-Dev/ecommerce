@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "@/lib/email";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req) {
     try {
         const { name, email, password } = await req.json();
