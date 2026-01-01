@@ -95,7 +95,7 @@ export default function AdminLayout({ children }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                         <div style={{ textAlign: 'right' }}>
                             <p style={{ fontWeight: 'bold', fontSize: '14px', margin: 0 }}>Nikhil Admin</p>
-                            <p style={{ fontSize: '12px', color: '#888', margin: 0 }}>Store Owner</p>
+                            <p style={{ fontSize: '12px', color: '#888', margin: 0 }}>nikhilprince18@gmail.com</p>
                         </div>
                         <div style={{
                             width: '40px',

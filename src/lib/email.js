@@ -26,7 +26,7 @@ export async function sendWelcomeEmail(toEmail, userName) {
     }
 
     const mailOptions = {
-        from: '"Sri Lakshmi Narayana Handlooms" <no-reply@slnh.com>',
+        from: '"Sri Lakshmi Narayana Handlooms" <nikhilprince18@gmail.com>',
         to: toEmail,
         subject: 'Welcome to Sri Lakshmi Narayana Handlooms!',
         html: `
