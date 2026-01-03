@@ -13,13 +13,25 @@ export async function POST(req) {
 
         // Use our safe prisma wrapper or mock logic
         if (prisma && prisma.user && prisma.user.create) {
-            await prisma.user.create({
+            const user = await prisma.user.create({
                 data: {
                     name,
                     email,
                     passwordHash: hashedPassword,
                 },
             });
+
+            // Create a welcome notification for the user
+            if (prisma.notification) {
+                await prisma.notification.create({
+                    data: {
+                        userId: user.id,
+                        title: "Welcome to SLNH!",
+                        message: `Namaste ${name}! Thank you for joining Sri Lakshmi Narayana Handlooms. Explore our authentic handwoven collections.`,
+                        isRead: false
+                    }
+                });
+            }
         }
 
         // Send thank you email (non-blocking for better UX)

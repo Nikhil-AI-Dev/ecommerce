@@ -9,6 +9,7 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
@@ -23,7 +24,7 @@ export default function RegisterPage() {
         }
 
         try {
-            const resUserExists = await fetch("api/userExists", {
+            const resUserExists = await fetch("/api/userExists", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
@@ -37,7 +38,7 @@ export default function RegisterPage() {
                 return;
             }
 
-            const res = await fetch("api/register", {
+            const res = await fetch("/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password }),
@@ -46,9 +47,13 @@ export default function RegisterPage() {
             if (res.ok) {
                 const form = e.target;
                 form.reset();
-                router.push("/login"); // Redirect to login after success
+                setSuccessMessage("Welcome to Sri Lakshmi Narayana Handlooms! Redirecting to login...");
+                setError("");
+                setTimeout(() => {
+                    router.push("/login");
+                }, 2000);
             } else {
-                console.log("User registration failed.");
+                setError("User registration failed.");
             }
         } catch (error) {
             console.log("Error during registration: ", error);
@@ -88,6 +93,11 @@ export default function RegisterPage() {
                     {error && (
                         <div style={{ color: 'red', fontSize: '14px', textAlign: 'center' }}>
                             {error}
+                        </div>
+                    )}
+                    {successMessage && (
+                        <div style={{ color: 'green', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>
+                            {successMessage}
                         </div>
                     )}
                     <button className="btn btn-primary" type="submit" style={{ width: '100%' }} disabled={isSubmitting}>
