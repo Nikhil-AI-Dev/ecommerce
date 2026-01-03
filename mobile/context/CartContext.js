@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from './AuthContext';
+import { useSocket } from './SocketContext';
 import Config from '../constants/Config';
 
 const CartContext = createContext();
@@ -38,11 +39,25 @@ const cartReducer = (state, action) => {
 
 export const CartProvider = ({ children }) => {
     const { user, isAuthenticated } = useAuth();
+    const socket = useSocket();
     const [state, dispatch] = useReducer(cartReducer, { items: [] });
 
     useEffect(() => {
         loadCart();
     }, []);
+
+    useEffect(() => {
+        if (socket) {
+            const handleRemoteSync = (data) => {
+                if (data.email === user?.email && data.type === 'cart') {
+                    console.log('Mobile syncing from remote:', data.items.length);
+                    dispatch({ type: 'SET_CART', payload: data.items });
+                }
+            };
+            socket.on('remote-sync', handleRemoteSync);
+            return () => socket.off('remote-sync', handleRemoteSync);
+        }
+    }, [socket, user]);
 
     useEffect(() => {
         saveCart();
@@ -53,7 +68,7 @@ export const CartProvider = ({ children }) => {
 
     const syncWithServer = async () => {
         try {
-            await fetch(`${Config.API_BASE_URL}/api/mobile/sync`, {
+            const response = await fetch(`${Config.API_BASE_URL}/api/mobile/sync`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -62,6 +77,14 @@ export const CartProvider = ({ children }) => {
                     items: state.items
                 }),
             });
+            const result = await response.json();
+            if (result.success && socket) {
+                socket.emit('sync-update', {
+                    email: user.email,
+                    type: 'cart',
+                    items: state.items
+                });
+            }
         } catch (error) {
             console.error('Cart Sync Error:', error);
         }

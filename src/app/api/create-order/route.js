@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
-import prisma from '@/lib/db';
+import { getPrisma } from '@/lib/db';
 
 // Initialize Razorpay (will work only if keys are present, otherwise mock)
 const razorpay = process.env.RAZORPAY_KEY_ID
@@ -17,6 +17,7 @@ import { sendOrderConfirmationEmail } from "@/lib/email";
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
+    const prisma = await getPrisma();
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -52,8 +53,8 @@ export async function POST(request) {
             return order;
         });
 
-        // 2. Create Razorpay Order
-        let paymentOrderId = `mock_rpay_${Date.now()}`;
+        // Generate tracking ID and delivery estimate
+        const trackingId = `SLN${Math.floor(Math.random() * 10000000)}`;
 
         if (razorpay) {
             const options = {

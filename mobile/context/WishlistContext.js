@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from './AuthContext';
+import { useSocket } from './SocketContext';
 import Config from '../constants/Config';
 
 const WishlistContext = createContext();
@@ -23,6 +24,7 @@ const wishlistReducer = (state, action) => {
 
 export const WishlistProvider = ({ children }) => {
     const { user, isAuthenticated } = useAuth();
+    const socket = useSocket();
     const [wishlist, dispatch] = useReducer(wishlistReducer, []);
 
     useEffect(() => {
@@ -40,6 +42,19 @@ export const WishlistProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
+        if (socket) {
+            const handleRemoteSync = (data) => {
+                if (data.email === user?.email && data.type === 'wishlist') {
+                    console.log('Mobile wishlist syncing from remote:', data.items.length);
+                    dispatch({ type: 'LOAD_WISHLIST', payload: data.items });
+                }
+            };
+            socket.on('remote-sync', handleRemoteSync);
+            return () => socket.off('remote-sync', handleRemoteSync);
+        }
+    }, [socket, user]);
+
+    useEffect(() => {
         const saveWishlist = async () => {
             try {
                 await AsyncStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
@@ -55,7 +70,7 @@ export const WishlistProvider = ({ children }) => {
 
     const syncWithServer = async () => {
         try {
-            await fetch(`${Config.API_BASE_URL}/api/mobile/sync`, {
+            const response = await fetch(`${Config.API_BASE_URL}/api/mobile/sync`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -64,6 +79,14 @@ export const WishlistProvider = ({ children }) => {
                     items: wishlist
                 }),
             });
+            const result = await response.json();
+            if (result.success && socket) {
+                socket.emit('sync-update', {
+                    email: user.email,
+                    type: 'wishlist',
+                    items: wishlist
+                });
+            }
         } catch (error) {
             console.error('Wishlist Sync Error:', error);
         }

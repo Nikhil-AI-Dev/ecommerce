@@ -2,33 +2,49 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSocket } from './SocketContext';
 
 const WishlistContext = createContext();
 
 export function WishlistProvider({ children }) {
     const [wishlist, setWishlist] = useState([]);
     const { data: session } = useSession();
+    const socket = useSocket();
 
-    // Load wishlist from local storage on mount
+    const [isLoaded, setIsLoaded] = useState(false);
     useEffect(() => {
         const savedWishlist = localStorage.getItem('sri_lakshmi_wishlist');
         if (savedWishlist) {
             setWishlist(JSON.parse(savedWishlist));
         }
+        setIsLoaded(true);
     }, []);
 
-    // Save to local storage and sync with server
     useEffect(() => {
-        localStorage.setItem('sri_lakshmi_wishlist', JSON.stringify(wishlist));
-
-        if (session?.user?.email && wishlist.length > 0) {
-            syncWithServer();
+        if (socket && session?.user?.email) {
+            const handleRemoteSync = (data) => {
+                if (data.email === session.user.email && data.type === 'wishlist') {
+                    console.log('Web wishlist syncing from remote:', data.items.length);
+                    setWishlist(data.items);
+                }
+            };
+            socket.on('remote-sync', handleRemoteSync);
+            return () => socket.off('remote-sync', handleRemoteSync);
         }
-    }, [wishlist, session]);
+    }, [socket, session]);
+
+    useEffect(() => {
+        if (isLoaded) {
+            localStorage.setItem('sri_lakshmi_wishlist', JSON.stringify(wishlist));
+            if (session?.user?.email) {
+                syncWithServer();
+            }
+        }
+    }, [wishlist, session, isLoaded]);
 
     const syncWithServer = async () => {
         try {
-            await fetch('/api/mobile/sync', {
+            const response = await fetch('/api/mobile/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -37,6 +53,14 @@ export function WishlistProvider({ children }) {
                     items: wishlist
                 }),
             });
+            const result = await response.json();
+            if (result.success && socket) {
+                socket.emit('sync-update', {
+                    email: session.user.email,
+                    type: 'wishlist',
+                    items: wishlist
+                });
+            }
         } catch (error) {
             console.error('Wishlist Sync Error:', error);
         }

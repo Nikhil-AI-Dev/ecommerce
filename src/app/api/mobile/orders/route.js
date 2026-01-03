@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { getPrisma } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
+    const prisma = await getPrisma();
     try {
         const { searchParams } = new URL(req.url);
         const email = searchParams.get('email');
@@ -21,30 +22,18 @@ export async function GET(req) {
             });
         }
 
-        // If no real DB orders, return mock data for demonstration
-        if (orders.length === 0) {
-            orders = [
-                {
-                    id: 'ORD-5521',
-                    totalAmount: 45000,
-                    status: 'Delivered',
-                    createdAt: new Date().toISOString(),
-                    items: [{ name: 'Royal Banarasi Silk Saree', price: 45000, qty: 1 }]
-                },
-                {
-                    id: 'ORD-4122',
-                    totalAmount: 12000,
-                    status: 'Shipped',
-                    createdAt: new Date(Date.now() - 86400000).toISOString(),
-                    items: [{ name: 'Gadwal Silk Cotton', price: 12000, qty: 1 }]
-                }
-            ];
-        }
+        // If no orders found, return empty array
+        return NextResponse.json({ success: true, orders });
 
         return NextResponse.json({ success: true, orders });
 
     } catch (error) {
-        console.error("Mobile Orders API Error:", error);
+        console.error("Mobile Orders API Error Detail:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+            code: error.code
+        });
         return NextResponse.json(
             { message: "Failed to fetch orders." },
             { status: 500 }

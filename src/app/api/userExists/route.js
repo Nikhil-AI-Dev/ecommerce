@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { getPrisma } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
+    const prisma = await getPrisma();
     try {
         const { email } = await req.json();
 

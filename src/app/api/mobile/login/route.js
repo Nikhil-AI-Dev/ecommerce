@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { getPrisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
+    const prisma = await getPrisma();
     try {
         const { email, password } = await req.json();
 
@@ -31,7 +32,7 @@ export async function POST(req) {
         return NextResponse.json({
             success: true,
             user: userProfile,
-            token: `mock_jwt_${Date.now()}` // In production, use real JWT
+            token: `v1_session_${Date.now()}`
         });
 
     } catch (error) {

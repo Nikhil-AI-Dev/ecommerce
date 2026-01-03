@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "@/lib/email";
+import { getPrisma } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
+    const prisma = await getPrisma();
     try {
         const { name, email, password } = await req.json();
         const hashedPassword = await bcrypt.hash(password, 10);

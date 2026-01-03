@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { getPrisma } from "@/lib/db";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
+    const prisma = await getPrisma();
     try {
         const { searchParams } = new URL(request.url);
         const category = searchParams.get('category');
@@ -35,6 +38,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    const prisma = await getPrisma();
     try {
         const body = await request.json();
         const { name, description, price, category, imageUrl, stockQuantity, isFeatured, discountedPrice } = body;

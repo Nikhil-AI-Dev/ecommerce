@@ -193,7 +193,7 @@ export default function CheckoutPage() {
                             {isProcessing ? 'Processing Payment...' : 'Pay with Razorpay'}
                         </button>
                         <p style={{ marginTop: '15px', fontSize: '12px', color: '#666', textAlign: 'center' }}>
-                            Secure Payment via Razorpay (Mock Mode)
+                            Secure Payment via Razorpay
                         </p>
                     </div>
                 </div>

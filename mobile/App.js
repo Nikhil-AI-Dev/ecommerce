@@ -15,6 +15,8 @@ import OrdersScreen from './screens/OrdersScreen';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { AuthProvider } from './context/AuthContext';
+import { SocketProvider } from './context/SocketContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Colors from './constants/Colors';
 
 const Stack = createStackNavigator();
@@ -56,24 +58,28 @@ function MainTabs() {
 export default function App() {
   return (
     <AuthProvider>
-      <WishlistProvider>
-        <CartProvider>
-          <NavigationContainer>
-            <Stack.Navigator
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="Main" component={MainTabs} />
-              <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
-              <Stack.Screen name="Checkout" component={CheckoutScreen} />
-              <Stack.Screen name="Success" component={SuccessScreen} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Orders" component={OrdersScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </CartProvider>
-      </WishlistProvider>
+      <SocketProvider>
+        <NotificationProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <NavigationContainer>
+                <Stack.Navigator
+                  screenOptions={{
+                    headerShown: false,
+                  }}
+                >
+                  <Stack.Screen name="Main" component={MainTabs} />
+                  <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+                  <Stack.Screen name="Checkout" component={CheckoutScreen} />
+                  <Stack.Screen name="Success" component={SuccessScreen} />
+                  <Stack.Screen name="Login" component={LoginScreen} />
+                  <Stack.Screen name="Orders" component={OrdersScreen} />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </CartProvider>
+          </WishlistProvider>
+        </NotificationProvider>
+      </SocketProvider>
     </AuthProvider>
   );
 }

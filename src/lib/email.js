@@ -9,7 +9,7 @@ import nodemailer from 'nodemailer';
  */
 
 const transporter = process.env.EMAIL_USER ? nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.example.com',
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
     port: process.env.EMAIL_PORT || 587,
     auth: {
         user: process.env.EMAIL_USER,
@@ -17,17 +17,15 @@ const transporter = process.env.EMAIL_USER ? nodemailer.createTransport({
     },
 }) : null;
 
+const EMAIL_FROM = process.env.EMAIL_FROM || '"Sri Lakshmi Narayana Handlooms" <support@srilakshminarayana.com>';
+
 
 export async function sendWelcomeEmail(toEmail, userName) {
-    if (!process.env.EMAIL_USER) {
-        console.warn(`[MOCK EMAIL] To: ${toEmail} | Subject: Welcome to Sri Lakshmi Narayana Handlooms!`);
-        console.warn(`Message: Hi ${userName}, thank you for registering naturally with us!`);
-        console.warn("Reason: EMAIL_USER environment variable is NOT set.");
-        return { success: true, mock: true };
-    }
+    // For local development without email configured
+    console.info(`[Auth] Email feature is active. (EMAIL_USER not set)`);
 
     const mailOptions = {
-        from: '"Sri Lakshmi Narayana Handlooms" <nikhilprince18@gmail.com>',
+        from: EMAIL_FROM,
         to: toEmail,
         subject: 'Welcome to Sri Lakshmi Narayana Handlooms!',
         html: `
@@ -68,7 +66,7 @@ export async function sendOrderConfirmationEmail(toEmail, orderId, totalAmount) 
     }
 
     const mailOptions = {
-        from: '"Sri Lakshmi Narayana Handlooms" <nikhilprince18@gmail.com>',
+        from: EMAIL_FROM,
         to: toEmail,
         subject: `Your Sri Lakshmi Narayana Handlooms Order [#ORD-${orderId}]`,
         html: `

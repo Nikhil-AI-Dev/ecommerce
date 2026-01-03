@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import { getPrisma } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+    const prisma = await getPrisma();
     try {
         // Real data queries
         const totalSales = await prisma.order.aggregate({
@@ -74,7 +75,12 @@ export async function GET() {
             }))
         });
     } catch (error) {
-        console.error("Stats API error:", error);
+        console.error("Stats API Error Detail:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+            code: error.code
+        });
         return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
     }
 }

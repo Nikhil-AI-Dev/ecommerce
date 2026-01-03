@@ -3,6 +3,8 @@ import "./globals.css";
 import { CartProvider } from "../context/CartContext";
 import { WishlistProvider } from "../context/WishlistContext";
 import { AuthProvider } from "../components/AuthProvider";
+import { SocketProvider } from "../context/SocketContext";
+import { NotificationProvider } from "../context/NotificationContext";
 import Footer from "../components/Footer";
 
 const playfair = Playfair_Display({
@@ -29,14 +31,18 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={`${playfair.variable} ${lato.variable}`} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }} suppressHydrationWarning>
         <AuthProvider>
-          <WishlistProvider>
-            <CartProvider>
-              <div style={{ flex: 1 }}>
-                {children}
-              </div>
-              <Footer />
-            </CartProvider>
-          </WishlistProvider>
+          <SocketProvider>
+            <NotificationProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <div style={{ flex: 1 }}>
+                    {children}
+                  </div>
+                  <Footer />
+                </CartProvider>
+              </WishlistProvider>
+            </NotificationProvider>
+          </SocketProvider>
         </AuthProvider>
       </body>
     </html>

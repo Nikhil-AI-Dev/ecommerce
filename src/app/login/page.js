@@ -36,7 +36,7 @@ export default function LoginPage() {
         <>
             <Navbar />
             <div className="container" style={{ maxWidth: '400px', marginTop: '80px' }}>
-                <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Login</h1>
+                <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Authentic Login</h1>
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
                     <input
                         type="email"

@@ -2,32 +2,49 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSocket } from './SocketContext';
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
     const [cart, setCart] = useState([]);
     const { data: session } = useSession();
+    const socket = useSocket();
 
-    // Load cart from local storage on mount
+    const [isLoaded, setIsLoaded] = useState(false);
     useEffect(() => {
         const savedCart = localStorage.getItem('sri_lakshmi_cart');
         if (savedCart) {
             setCart(JSON.parse(savedCart));
         }
+        setIsLoaded(true);
     }, []);
 
-    // Save cart to local storage and sync whenever it changes
     useEffect(() => {
-        localStorage.setItem('sri_lakshmi_cart', JSON.stringify(cart));
-        if (session?.user?.email && cart.length > 0) {
-            syncWithServer();
+        if (socket && session?.user?.email) {
+            const handleRemoteSync = (data) => {
+                if (data.email === session.user.email && data.type === 'cart') {
+                    console.log('Web syncing from remote:', data.items.length);
+                    setCart(data.items);
+                }
+            };
+            socket.on('remote-sync', handleRemoteSync);
+            return () => socket.off('remote-sync', handleRemoteSync);
         }
-    }, [cart, session]);
+    }, [socket, session]);
+
+    useEffect(() => {
+        if (isLoaded) {
+            localStorage.setItem('sri_lakshmi_cart', JSON.stringify(cart));
+            if (session?.user?.email) {
+                syncWithServer();
+            }
+        }
+    }, [cart, session, isLoaded]);
 
     const syncWithServer = async () => {
         try {
-            await fetch('/api/mobile/sync', {
+            const response = await fetch('/api/mobile/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -36,6 +53,14 @@ export function CartProvider({ children }) {
                     items: cart
                 }),
             });
+            const result = await response.json();
+            if (result.success && socket) {
+                socket.emit('sync-update', {
+                    email: session.user.email,
+                    type: 'cart',
+                    items: cart
+                });
+            }
         } catch (error) {
             console.error('Cart Sync Error:', error);
         }
